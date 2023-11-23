@@ -7,11 +7,38 @@
 	</head>
 	<body>
 		<h1>{{ movie.title }}</h1>
-		<p>{{ movie.namesRefs }}</p>
-		<p>{{ movie.getattribute }}</p>
-		<p>{{ movie.pop }}</p>
+		<p>Synopsis: {{ movie.synopsis }}</p>
+		<p>{{ movie.genres }}</p>
+		<p>{{ movie.rating }} </p>
+<iframe src="{{ movie.trailer_url }}" width="560" height="315"></iframe>
+		<a href="{{ movie.trailer_url }}" target="_blank">Watch Trailer</a>
 
-		<img src="{{ movie.get_fullsizeURL }}" width="200px" />
-		<p>{{ movie.pop }}</p>
+
+
+
+
+		{% comment %} <p>{{ movie.namesRefs }}</p>
+		<p>{{ movie.year }}</p>
+		<p>synopsis{{ movie.synopsis }}</p>
+		<p>synopsis{{ movie.plot }}
+			{{ movie.get_plot}}
+			{{ movie.get_fullsizeURL}}
+			{{ movie.fullsizeURL}}
+			<p>{{ movie['title'] }}</p>
+
+
+
+			{{ movie.get_rating}}
+
+		</p>
+
+
+		<p>{{ synops }}</p> {% endcomment %}
+
+		{% comment %} <p>Synopsis: {{ movie.get('plot outline')|default:"No synopsis available" }}</p>
+		</p> {% endcomment %}
+
+
+		<img src="{{ movie.cover}}" width="200px" />
 	</body>
 </html>
