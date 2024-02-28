@@ -17,10 +17,15 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url = uri("https://jitpack.io") }
+
 }
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+	implementation("com.github.dotenv-org:dotenv-vault-kotlin:0.0.2")
+
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")

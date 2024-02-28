@@ -1,20 +1,23 @@
-package com.yourpackage
+package com.movieapp.movieapp
+import com.movieapp.movieapp.AppConfig
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
-import org.springframework.http.ResponseEntity
+
+
 
 @RestController
-class MovieController {
+class MovieController (private val appConfig: AppConfig){
+    private val restTemplate = RestTemplate()
 
     @GetMapping("/movies")
-    fun getMovies(): ResponseEntity<String> {
-        val restTemplate = RestTemplate()
-        val apiKey = "VOTRE_CLÉ_API"
-        val url = "https://api.themoviedb.org/3/movie/popular?api_key=$apiKey"
+    fun getMovies(): String {
+        val apiKey = appConfig.getApiKey()
 
-        val response = restTemplate.getForEntity(url, String::class.java)
-        return ResponseEntity.ok(response.body)
+        val url = "https://api.themoviedb.org/3/movie/popular?api_key=$apiKey"
+        val response = restTemplate.getForObject(url, String::class.java)
+        return response ?: "Error fetching movies"
     }
+
 }

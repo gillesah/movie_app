@@ -4,7 +4,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-.env
+src/main/kotlin/com/movieapp/movieapp/.env
 ### STS ###
 .apt_generated
 .classpath
@@ -38,3 +38,8 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
