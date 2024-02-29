@@ -2,25 +2,24 @@ package com.movieapp.movieapp
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.core.io.ClassPathResource
-import java.util.*
-import java.util.Properties
+import org.springframework.context.annotation.Bean
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-
-
-fun loadConfigurations() {
-	val properties = Properties()
-	val resource = ClassPathResource("config.properties")
-	properties.load(resource.inputStream)
-
-}
 @SpringBootApplication
-class MovieappApplication
-
-
+class MovieappApplication {
+	@Bean
+	fun corsConfigurer() = object : WebMvcConfigurer {
+		override fun addCorsMappings(registry: CorsRegistry) {
+			registry.addMapping("/**")
+				.allowedOrigins("http://localhost:8081") // Autorise le frontend Vue.js
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				.allowedHeaders("*")
+				.allowCredentials(true)
+		}
+	}
+}
 
 fun main(args: Array<String>) {
-	loadConfigurations()
-	val apiKey = System.getProperty("TMDB_API_KEY")
 	runApplication<MovieappApplication>(*args)
 }
