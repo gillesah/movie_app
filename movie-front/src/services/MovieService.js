@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080';
 
 class MovieService {
-    getPopularMovies() {
+    getAllPopularMovies() {
         return axios.get(`${API_URL}/popular`);
     }
 }

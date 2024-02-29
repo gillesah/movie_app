@@ -27,4 +27,13 @@ class TmdbService(private val appConfig: AppConfig) {
         }
         return null
     }
+    fun getAllPopularMovie(): List<Map<String, Any>>? {
+        val apiKey = appConfig.getApiKey()
+        val url = "$baseUrl?api_key=$apiKey"
+        val response = restTemplate.getForObject(url, Map::class.java)
+        val results = response?.get("results") as List<Map<String, Any>>?
+        return results
+
+
+    }
 }

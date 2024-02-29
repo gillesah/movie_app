@@ -19,8 +19,12 @@ class MovieController(private val appConfig: AppConfig, private val tmdbService:
         return response ?: "Error fetching movies"
     }
 
-    @GetMapping("/popular")
+    @GetMapping("/randompopular")
     fun getPopularMovie(): Movie? {
         return tmdbService.getRandomPopularMovie()
+    }
+    @GetMapping("/popular")
+    fun getAllMovie(): List<Map<String, Any>>? {
+        return tmdbService.getAllPopularMovie()
     }
 }
