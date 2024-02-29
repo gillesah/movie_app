@@ -27,13 +27,42 @@ class TmdbService(private val appConfig: AppConfig) {
         }
         return null
     }
-    fun getAllPopularMovie(): List<Map<String, Any>>? {
+
+    fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
         val apiKey = appConfig.getApiKey()
-        val url = "$baseUrl?api_key=$apiKey"
+        val results = mutableListOf<Map<String, Any>>()
+
+        for (page in 1..100) {
+            val url = "$baseUrl?api_key=$apiKey&page=$page"
+            val response = restTemplate.getForObject(url, Map::class.java)
+            val pageResults = response?.get("results") as List<Map<String, Any>>?
+            pageResults?.let { results.addAll(it) }
+        }
+
+        return results?.filter { movie ->
+            genreId == null || (movie["genre_ids"] as List<Int>).contains(genreId)
+        }?.sortedByDescending { movie ->
+            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
+        }
+    }
+
+    //    fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
+//        val apiKey = appConfig.getApiKey()
+//        val url = "$baseUrl?api_key=$apiKey"
+//        val response = restTemplate.getForObject(url, Map::class.java)
+//        val results = response?.get("results") as List<Map<String, Any>>?
+//
+//        // Filtrer par genre si un genreId est spécifié, puis trier tous les films par vote_average en ordre décroissant
+//        return results?.filter { movie ->
+//            genreId == null || (movie["genre_ids"] as List<Int>).contains(genreId)
+//        }?.sortedByDescending { movie ->
+//            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
+//        }
+//    }
+    fun getGenres(): List<Map<String, Any>>? {
+        val apiKey = appConfig.getApiKey()
+        val url = "https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey"
         val response = restTemplate.getForObject(url, Map::class.java)
-        val results = response?.get("results") as List<Map<String, Any>>?
-        return results
-
-
+        return response?.get("genres") as List<Map<String, Any>>?
     }
 }

@@ -5,7 +5,8 @@
 <script>
 import PopularMovies from "./components/PopularMovies.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 export default {
 	name: "App",

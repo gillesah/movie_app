@@ -2,8 +2,10 @@ package com.movieapp.movieapp
 
 import com.movieapp.movieapp.models.Movie
 import com.movieapp.movieapp.services.TmdbService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 
@@ -23,8 +25,19 @@ class MovieController(private val appConfig: AppConfig, private val tmdbService:
     fun getPopularMovie(): Movie? {
         return tmdbService.getRandomPopularMovie()
     }
+//    @GetMapping("/popular")
+//    fun getAllMovie(): List<Map<String, Any>>? {
+//        return tmdbService.getAllPopularMovie()
+//    }
     @GetMapping("/popular")
-    fun getAllMovie(): List<Map<String, Any>>? {
-        return tmdbService.getAllPopularMovie()
+    fun getMovies(@RequestParam(required = false) genreId: Int?): ResponseEntity<List<Map<String, Any>>?> {
+        val movies = tmdbService.getAllPopularMovies(genreId)
+        return ResponseEntity.ok(movies)
+    }
+    //http://localhost:8080/popular?genreId=16
+    @GetMapping("/genres")
+    fun getGenres(): ResponseEntity<List<Map<String, Any>>?> {
+        val genres = tmdbService.getGenres()
+        return ResponseEntity.ok(genres)
     }
 }
