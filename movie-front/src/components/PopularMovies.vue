@@ -1,6 +1,6 @@
 <template>
 	<div class="slider-container">
-		<h1>Films Populaires</h1>
+		<h1 class="title-page">Mon film ce soir</h1>
 		<div class="dropdown">
 			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
 			<ul class="dropdown-menu">
@@ -14,17 +14,31 @@
 		</div>
 		<div v-if="movies.length">
 			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
-			<div class="movie row" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie': index === currentIndex }">
-				<div class="col-5"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
-				<div class="col-7 my-5 p-5">
-					<h2>{{ movie.title }}</h2>
-					<h3>note : {{ movie.vote_average }}</h3>
-					<div v-for="genreId in movie.genre_ids" :key="genreId" class="my-3">
-						<span class="genre">{{ genreName(genreId) }}</span>
+			<div>
+				<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
+					<div class="col-5"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
+					<div class="col-6 p-3">
+						<h2>{{ movie.title }}</h2>
+						<h3>note : {{ movie.vote_average }}</h3>
+						<div v-for="genreId in movie.genre_ids" :key="genreId" class="py-1">
+							<span class="genre">{{ genreName(genreId) }}</span>
+						</div>
+						<p class="my-5">{{ movie.overview }}</p>
+						<div v-if="trailerUrls.length > 0" class="trailer-container">
+							<iframe
+								v-for="(trailerUrl, index) in trailerUrls"
+								:key="index"
+								:src="trailerUrl"
+								width="560"
+								height="315"
+								frameborder="0"
+								allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+								allowfullscreen></iframe>
+						</div>
 					</div>
-					<p class="my-5">{{ movie.overview }}</p>
 				</div>
 			</div>
+
 			<button @click="nextMovie" class="btn-nav right">&#10095;</button>
 		</div>
 	</div>
@@ -40,6 +54,7 @@ export default {
 			genres: [],
 			selectedGenres: [], // Notez le changement ici pour supporter la sélection multiple
 			currentIndex: 0,
+			trailerUrls: [],
 		};
 	},
 	computed: {
@@ -64,7 +79,9 @@ export default {
 		getAllMovies() {
 			MovieService.getAllPopularMovies().then((response) => {
 				this.movies = response.data;
-				// Assurez-vous d'ajuster selon la structure de données réelle
+				if (this.movies.length > 0) {
+					this.fetchMovieTrailers(this.movies[0].id); // Assurez-vous que ceci utilise le bon ID
+				}
 			});
 		},
 		getGenres() {
@@ -73,6 +90,18 @@ export default {
 				// Assurez-vous d'ajuster selon la structure de données réelle
 			});
 		},
+		fetchMovieTrailers(movieId) {
+			MovieService.getMovieTrailers(movieId)
+				.then((response) => {
+					this.trailerUrls = response.data.map((key) => `https://www.youtube.com/embed/${key}`);
+				})
+				.catch((error) => {
+					console.error("Erreur lors de la récupération des trailers :", error);
+					this.trailerUrls = [];
+				});
+		},
+		//940551
+
 		nextMovie() {
 			if (this.currentIndex < this.movies.length - 1) {
 				this.currentIndex++;
@@ -91,11 +120,17 @@ export default {
 	created() {
 		this.getAllMovies();
 		this.getGenres();
+		if (this.movies.length > 0) {
+			this.fetchMovieTrailers(this.movies[0].id);
+		}
 	},
 };
 </script>
 
 <style>
+.title-page {
+	margin-bottom: 2em;
+}
 .genre {
 	background-color: #402060;
 	color: white;
@@ -112,12 +147,15 @@ export default {
 	width: 100%;
 	display: none;
 }
+.movie img {
+	max-width: 90%;
+}
 .active-movie {
 	display: block; /* Afficher seulement le film actif */
 }
 .slider-container {
 	position: relative;
-	max-width: 50vw;
+	max-width: 80vw;
 	margin: auto;
 }
 
@@ -126,7 +164,9 @@ export default {
 	align-items: center; /* Centre les éléments verticalement */
 	justify-content: center; /* Centre le contenu horizontalement */
 	position: relative; /* Nécessaire pour positionner les boutons de navigation */
-	max-width: 50vw;
+	max-width: 70vw;
+	height: 100vh;
+	max-height: 100vh;
 }
 
 .btn-nav {

@@ -3,10 +3,7 @@ package com.movieapp.movieapp
 import com.movieapp.movieapp.models.Movie
 import com.movieapp.movieapp.services.TmdbService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
 
 @RestController
@@ -39,5 +36,15 @@ class MovieController(private val appConfig: AppConfig, private val tmdbService:
     fun getGenres(): ResponseEntity<List<Map<String, Any>>?> {
         val genres = tmdbService.getGenres()
         return ResponseEntity.ok(genres)
+    }
+
+    @GetMapping("/{movieId}/trailers")
+    fun getMovieTrailers(@PathVariable movieId: Int): ResponseEntity<List<String>> {
+        val trailers = tmdbService.getMovieTrailers(movieId)
+        return if (trailers != null && trailers.isNotEmpty()) {
+            ResponseEntity.ok(trailers)
+        } else {
+            ResponseEntity.notFound().build()
+        }
     }
 }

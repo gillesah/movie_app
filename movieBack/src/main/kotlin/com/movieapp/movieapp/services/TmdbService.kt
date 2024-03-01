@@ -65,4 +65,22 @@ class TmdbService(private val appConfig: AppConfig) {
         val response = restTemplate.getForObject(url, Map::class.java)
         return response?.get("genres") as List<Map<String, Any>>?
     }
+    fun getMovieTrailers(movieId: Int): List<String>? {
+        val apiKey = appConfig.getApiKey()
+        val url = "https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey"
+        val response = restTemplate.getForObject(url, Map::class.java)
+
+        // Cette ligne extrait la liste de vidéos depuis la réponse
+        val videos = response?.get("results") as List<Map<String, Any>>?
+
+        // On filtre les vidéos pour obtenir uniquement les trailers sur YouTube,
+        // puis on mappe chaque vidéo à sa clé YouTube
+        return videos?.filter { video ->
+            "YouTube" == video["site"] && "Trailer" == video["type"]
+        }?.map { video ->
+            video["key"].toString()
+        }
+    }
+
+
 }
