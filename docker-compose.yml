@@ -9,7 +9,7 @@ services:
     restart: unless-stopped
   moviefront:
     build:
-      context: ./movie-front
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: movie-front/Dockerfile
     ports:
       - "85:80"

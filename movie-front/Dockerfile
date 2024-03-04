@@ -1,9 +1,9 @@
 # Construire l'application
-FROM node:14 as build-stage
+FROM node:latest
 WORKDIR /app
-COPY package*.json ./
+COPY movie-front/package*.json ./
 RUN npm install
-COPY . .
+COPY movie-front/ .
 RUN npm run build
 
 # Préparer Nginx pour servir l'application
