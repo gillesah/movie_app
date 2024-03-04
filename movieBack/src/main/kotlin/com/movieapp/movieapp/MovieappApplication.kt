@@ -20,15 +20,7 @@ class MovieappApplication : SpringBootServletInitializer() {
 	fun corsConfigurer() = object : WebMvcConfigurer {
 		override fun addCorsMappings(registry: CorsRegistry) {
 			registry.addMapping("/**")
-<<<<<<< HEAD
 				.allowedOrigins("http://localhost:85") // Autorise le frontend Vue.js
-=======
-<<<<<<< HEAD
-				.allowedOrigins("http://localhost:85") // Mettez à jour selon l'origine de votre frontend
-=======
-				.allowedOrigins("http://localhost:85") // Autorise le frontend Vue.js
->>>>>>> 41192c2 (docker ok)
->>>>>>> main2
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*")
 				.allowCredentials(true)
