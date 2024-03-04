@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  movieback:
+    build:
+      context: ./movieBack # Assurez-vous que ce chemin pointe vers le dossier contenant votre Dockerfile back-end
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    restart: unless-stopped
+  moviefront:
+    build:
+      context: ./movie-front
+      dockerfile: Dockerfile
+    ports:
+      - "85:80"

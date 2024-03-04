@@ -1,17 +1,24 @@
-# Utiliser une image de base pour le JDK
-FROM openjdk:11-jdk-slim as build
+# Utiliser l'image officielle Ubuntu 20.04
+FROM ubuntu:20.04
 
-# Copier les sources dans l'image
-COPY . /app
+# Mise à jour des packages et installation de Java 17 et Gradle
+RUN apt-get update && apt-get install -y openjdk-17-jdk gradle
 
-WORKDIR /app
+COPY . /work
 
-# Compiler le projet
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /work
+
+# Copier le fichier build.gradle.kts et les fichiers source Kotlin dans le conteneur
+COPY build.gradle.kts .
+COPY src src
+
+# Exécuter la construction du projet avec Gradle
 RUN ./gradlew build
+#RUN mv /work/build/libs/*.jar /work/app.jar
 
-# Exécuter l'application
-FROM openjdk:11-jre-slim
-COPY --from=build /app/build/libs/*.jar app.jar
-
+# Exposer le port utilisé par l'application Kotlin
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+# Commande d'exécution de l'application Spring Boot
+CMD ["java", "-jar", "build/libs/movieapp-0.0.1-SNAPSHOT.jar"]
