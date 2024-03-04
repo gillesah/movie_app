@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate
 @RestController
 class MovieController(private val appConfig: AppConfig, private val tmdbService: TmdbService) {
     private val restTemplate = RestTemplate()
-    @CrossOrigin(origins = ["http://localhost:8081"])
+    @CrossOrigin(origins = ["http://localhost:85"])
     @GetMapping("/movies")
     fun getMovies(): String {
         val apiKey = appConfig.getApiKey()

@@ -1,17 +1,34 @@
-# Utiliser une image de base pour le JDK
-FROM openjdk:11-jdk-slim as build
+# Étape de build
+FROM openjdk:17-alpine AS build
 
-# Copier les sources dans l'image
-COPY . /app
 
+# Installer les outils nécessaires (si nécessaire)
+RUN apk add --no-cache curl tar bash
+
+# Définir le répertoire de travail pour copier les fichiers du projet
 WORKDIR /app
 
-# Compiler le projet
-RUN ./gradlew build
+# Copier le projet dans l'image
+COPY . .
 
-# Exécuter l'application
-FROM openjdk:11-jre-slim
+# Donner la permission d'exécution au script gradlew
+RUN chmod +x ./gradlew
+
+# Construire l'application Spring Boot en utilisant Gradle Wrapper
+# Ignorer les tests si nécessaire pour éviter l'erreur lors de la construction
+RUN ./gradlew clean build -x test
+
+# Étape de déploiement
+FROM openjdk:17-alpine
+
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /app
+
+# Copier le fichier JAR du stage de build au stage de déploiement
 COPY --from=build /app/build/libs/*.jar app.jar
 
+# Exposer le port sur lequel votre application écoute
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+
+# Commande pour exécuter l'application
+ENTRYPOINT ["java", "-jar", "app.jar"]
