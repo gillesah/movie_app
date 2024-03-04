@@ -16,8 +16,8 @@
 			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
 			<div>
 				<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
-					<div class="col-5"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
-					<div class="col-6 p-3">
+					<div class="col-6 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
+					<div class="col-6 col-md-8 p-3">
 						<h2>{{ movie.title }}</h2>
 						<h3>note : {{ movie.vote_average }}</h3>
 						<div v-for="genreId in movie.genre_ids" :key="genreId" class="py-1">
@@ -151,7 +151,8 @@ export default {
 	max-width: 90%;
 }
 .active-movie {
-	display: block; /* Afficher seulement le film actif */
+	display: flex; /* Afficher seulement le film actif */
+	width: 100%;
 }
 .slider-container {
 	position: relative;
