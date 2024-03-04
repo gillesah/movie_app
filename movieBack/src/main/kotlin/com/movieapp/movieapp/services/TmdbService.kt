@@ -32,7 +32,7 @@ class TmdbService(private val appConfig: AppConfig) {
         val apiKey = appConfig.getApiKey()
         val results = mutableListOf<Map<String, Any>>()
 
-        for (page in 1..30) {
+        for (page in 1..2) {
             val url = "$baseUrl?api_key=$apiKey&page=$page"
             val response = restTemplate.getForObject(url, Map::class.java)
             val pageResults = response?.get("results") as List<Map<String, Any>>?
