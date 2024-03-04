@@ -1,34 +1,24 @@
-# Étape de build
-FROM openjdk:17-alpine AS build
+# Utiliser l'image officielle Ubuntu 20.04
+FROM ubuntu:20.04
 
+# Mise à jour des packages et installation de Java 17 et Gradle
+RUN apt-get update && apt-get install -y openjdk-17-jdk gradle
 
-# Installer les outils nécessaires (si nécessaire)
-RUN apk add --no-cache curl tar bash
-
-# Définir le répertoire de travail pour copier les fichiers du projet
-WORKDIR /app
-
-# Copier le projet dans l'image
-COPY . .
-
-# Donner la permission d'exécution au script gradlew
-RUN chmod +x ./gradlew
-
-# Construire l'application Spring Boot en utilisant Gradle Wrapper
-# Ignorer les tests si nécessaire pour éviter l'erreur lors de la construction
-RUN ./gradlew clean build -x test
-
-# Étape de déploiement
-FROM openjdk:17-alpine
+COPY . /work
 
 # Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /work
 
-# Copier le fichier JAR du stage de build au stage de déploiement
-COPY --from=build /app/build/libs/*.jar app.jar
+# Copier le fichier build.gradle.kts et les fichiers source Kotlin dans le conteneur
+COPY build.gradle.kts .
+COPY src src
 
-# Exposer le port sur lequel votre application écoute
+# Exécuter la construction du projet avec Gradle
+RUN ./gradlew build
+#RUN mv /work/build/libs/*.jar /work/app.jar
+
+# Exposer le port utilisé par l'application Kotlin
 EXPOSE 8080
 
-# Commande pour exécuter l'application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Commande d'exécution de l'application Spring Boot
+CMD ["java", "-jar", "build/libs/movieapp-0.0.1-SNAPSHOT.jar"]
