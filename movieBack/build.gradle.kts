@@ -17,6 +17,7 @@ java {
 repositories {
 	mavenCentral()
 	maven { url = uri("https://jitpack.io") }
+
 }
 
 dependencies {
@@ -27,7 +28,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-
+//	providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
