@@ -14,9 +14,11 @@ class MovieService {
 	getGenres() {
 		return axios.get(`${API_URL}/genres`);
 	}
+	
 	getMovieTrailers(movieId) {
 		return axios.get(`${API_URL}/${movieId}/trailers`);
 	}
+
 }
 
 export default new MovieService();

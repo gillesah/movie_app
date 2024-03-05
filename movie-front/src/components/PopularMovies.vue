@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
 	<div class="slider-container">
 		<h1 class="title-page">Mon film ce soir</h1>
@@ -24,10 +25,11 @@
 							<span class="genre">{{ genreName(genreId) }}</span>
 						</div>
 						<p class="my-5">{{ movie.overview }}</p>
-						<div v-if="trailerUrls.length > 0" class="trailer-container">
+
+						<div class="trailer-container" :class="{ 'active-trailer': index === currentIndex }">
 							<iframe
-								v-for="(trailerUrl, index) in trailerUrls"
-								:key="index"
+								v-for="trailerUrl in trailerUrls"
+								:key="trailerUrl"
 								:src="trailerUrl"
 								width="560"
 								height="315"
@@ -63,6 +65,12 @@ export default {
 			return this.movies.filter((movie) => movie.genre_ids.some((id) => this.selectedGenres.includes(id)));
 		},
 	},
+
+	watch: {
+		currentIndex() {
+			this.loadCurrentMovieTrailer();
+		},
+	},
 	methods: {
 		toggleGenreSelection(genreId) {
 			const index = this.selectedGenres.indexOf(genreId);
@@ -80,15 +88,20 @@ export default {
 			MovieService.getAllPopularMovies().then((response) => {
 				this.movies = response.data;
 				if (this.movies.length > 0) {
-					this.fetchMovieTrailers(this.movies[0].id); // Assurez-vous que ceci utilise le bon ID
+					this.fetchMovieTrailers(this.movies[0].id);
 				}
 			});
 		},
 		getGenres() {
 			MovieService.getGenres().then((response) => {
 				this.genres = response.data;
-				// Assurez-vous d'ajuster selon la structure de données réelle
 			});
+		},
+		loadCurrentMovieTrailer() {
+			const currentMovie = this.filteredMovies[this.currentIndex];
+			if (currentMovie) {
+				this.fetchMovieTrailers(currentMovie.id);
+			}
 		},
 		fetchMovieTrailers(movieId) {
 			MovieService.getMovieTrailers(movieId)
@@ -100,6 +113,7 @@ export default {
 					this.trailerUrls = [];
 				});
 		},
+
 		//940551
 
 		nextMovie() {
@@ -120,9 +134,10 @@ export default {
 	created() {
 		this.getAllMovies();
 		this.getGenres();
-		if (this.movies.length > 0) {
-			this.fetchMovieTrailers(this.movies[0].id);
-		}
+
+		// if (this.movies.length > 0) {
+		// 	this.fetchMovieTrailers(this.movie.id);
+		// }
 	},
 };
 </script>
@@ -147,6 +162,12 @@ export default {
 	width: 100%;
 	display: none;
 }
+.trailer-container {
+	display: none;
+}
+.active-trailer {
+	display: block;
+}
 .movie img {
 	max-width: 90%;
 }
@@ -154,6 +175,7 @@ export default {
 	display: flex; /* Afficher seulement le film actif */
 	width: 100%;
 }
+
 .slider-container {
 	position: relative;
 	max-width: 80vw;

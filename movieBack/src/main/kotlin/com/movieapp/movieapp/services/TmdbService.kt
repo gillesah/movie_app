@@ -28,44 +28,50 @@ class TmdbService(private val appConfig: AppConfig) {
         return null
     }
 
-    fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
-        val apiKey = appConfig.getApiKey()
-        val results = mutableListOf<Map<String, Any>>()
-
-        for (page in 1..2) {
-            val url = "$baseUrl?api_key=$apiKey&page=$page"
-            val response = restTemplate.getForObject(url, Map::class.java)
-            val pageResults = response?.get("results") as List<Map<String, Any>>?
-            pageResults?.let { results.addAll(it) }
-        }
-
-        return results?.filter { movie ->
-            genreId == null || (movie["genre_ids"] as List<Int>).contains(genreId)
-        }?.sortedByDescending { movie ->
-            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
-        }
-    }
-
-    //    fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
+//    fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
 //        val apiKey = appConfig.getApiKey()
-//        val url = "$baseUrl?api_key=$apiKey"
-//        val response = restTemplate.getForObject(url, Map::class.java)
-//        val results = response?.get("results") as List<Map<String, Any>>?
+//        val results = mutableListOf<Map<String, Any>>()
 //
-//        // Filtrer par genre si un genreId est spécifié, puis trier tous les films par vote_average en ordre décroissant
+//        for (page in 1..2) {
+//            val url = "$baseUrl?api_key=$apiKey&page=$page"
+//            val response = restTemplate.getForObject(url, Map::class.java)
+//            val pageResults = response?.get("results") as List<Map<String, Any>>?
+//            pageResults?.let { results.addAll(it) }
+//        }
+//
 //        return results?.filter { movie ->
 //            genreId == null || (movie["genre_ids"] as List<Int>).contains(genreId)
 //        }?.sortedByDescending { movie ->
 //            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
 //        }
 //    }
+
+        fun getAllPopularMovies(genreId: Int? = null): List<Map<String, Any>>? {
+        val apiKey = appConfig.getApiKey()
+        val url = "$baseUrl?api_key=$apiKey"
+        val response = restTemplate.getForObject(url, Map::class.java)
+        val results = response?.get("results") as List<Map<String, Any>>?
+
+        // Filtrer par genre si un genreId est spécifié, puis trier tous les films par vote_average en ordre décroissant
+        return results?.filter { movie ->
+            genreId == null || (movie["genre_ids"] as List<Int>).contains(genreId)
+        }?.sortedByDescending { movie ->
+            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
+        }
+    }
     fun getGenres(): List<Map<String, Any>>? {
         val apiKey = appConfig.getApiKey()
         val url = "https://api.themoviedb.org/3/genre/movie/list?api_key=$apiKey"
         val response = restTemplate.getForObject(url, Map::class.java)
         return response?.get("genres") as List<Map<String, Any>>?
     }
-    fun getMovieTrailers(movieId: Int): List<String>? {
+    fun getVoteAverage(): List<Map<String, Any>>? {
+        val apiKey = appConfig.getApiKey()
+        val url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&language=fr-FR&sort_by=vote_average.desc?api_key=$apiKey"
+        val response = restTemplate.getForObject(url, Map::class.java)
+        return response?.get("results") as List<Map<String, Any>>?
+    }
+    fun getMovieTrailers(movieId: Int): String? {
         val apiKey = appConfig.getApiKey()
         val url = "https://api.themoviedb.org/3/movie/$movieId/videos?api_key=$apiKey"
         val response = restTemplate.getForObject(url, Map::class.java)
@@ -73,13 +79,10 @@ class TmdbService(private val appConfig: AppConfig) {
         // Cette ligne extrait la liste de vidéos depuis la réponse
         val videos = response?.get("results") as List<Map<String, Any>>?
 
-        // On filtre les vidéos pour obtenir uniquement les trailers sur YouTube,
-        // puis on mappe chaque vidéo à sa clé YouTube
-        return videos?.filter { video ->
+        // On cherche le premier trailer sur YouTube et renvoie sa clé
+        return videos?.firstOrNull { video ->
             "YouTube" == video["site"] && "Trailer" == video["type"]
-        }?.map { video ->
-            video["key"].toString()
-        }
+        }?.get("key")?.toString()
     }
 
 

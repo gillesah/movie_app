@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate
 @RestController
 class MovieController(private val appConfig: AppConfig, private val tmdbService: TmdbService) {
     private val restTemplate = RestTemplate()
-    @CrossOrigin(origins = ["http://localhost:85"])
+    @CrossOrigin(origins = ["http://localhost:85", "http://localhost:8080", "https://mycinehunt.com/" ])
     @GetMapping("/movies")
     fun getMovies(): String {
         val apiKey = appConfig.getApiKey()
@@ -38,11 +38,12 @@ class MovieController(private val appConfig: AppConfig, private val tmdbService:
         return ResponseEntity.ok(genres)
     }
 
+
     @GetMapping("/{movieId}/trailers")
-    fun getMovieTrailers(@PathVariable movieId: Int): ResponseEntity<List<String>> {
-        val trailers = tmdbService.getMovieTrailers(movieId)
-        return if (trailers != null && trailers.isNotEmpty()) {
-            ResponseEntity.ok(trailers)
+    fun getMovieTrailer(@PathVariable movieId: Int): ResponseEntity<String> {
+        val trailer = tmdbService.getMovieTrailers(movieId)
+        return if (trailer != null) {
+            ResponseEntity.ok(trailer)
         } else {
             ResponseEntity.notFound().build()
         }

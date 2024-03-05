@@ -12,7 +12,7 @@ class MovieappApplication {
 	fun corsConfigurer() = object : WebMvcConfigurer {
 		override fun addCorsMappings(registry: CorsRegistry) {
 			registry.addMapping("/**")
-				.allowedOrigins("http://localhost:85", "https://mycinehunt.com") // Autorise le frontend Vue.js
+				.allowedOrigins("http://localhost:85", "https://mycinehunt.com", "http://localhost:8080") // Autorise le frontend Vue.js
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*")
 				.allowCredentials(true)
