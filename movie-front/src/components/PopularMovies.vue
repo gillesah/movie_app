@@ -2,6 +2,7 @@
 <template>
 	<div class="slider-container">
 		<h1 class="title-page">Mon film ce soir</h1>
+
 		<div class="dropdown">
 			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
 			<ul class="dropdown-menu">
@@ -13,6 +14,7 @@
 				</li>
 			</ul>
 		</div>
+
 		<div v-if="movies.length">
 			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
 			<div>
@@ -20,23 +22,16 @@
 					<div class="col-6 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
 					<div class="col-6 col-md-8 p-3">
 						<h2>{{ movie.title }}</h2>
+						<div>{{ trailerUrl }} coucou</div>
 						<h3>note : {{ movie.vote_average }}</h3>
 						<div v-for="genreId in movie.genre_ids" :key="genreId" class="py-1">
 							<span class="genre">{{ genreName(genreId) }}</span>
 						</div>
 						<p class="my-5">{{ movie.overview }}</p>
 
-						<div class="trailer-container" :class="{ 'active-trailer': index === currentIndex }">
-							<iframe
-								v-for="trailerUrl in trailerUrls"
-								:key="trailerUrl"
-								:src="trailerUrl"
-								width="560"
-								height="315"
-								frameborder="0"
-								allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-								allowfullscreen></iframe>
-						</div>
+						<!-- <div class="trailer-container" v-if="trailerUrl">
+							<iframe :src="trailerUrl" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -54,11 +49,12 @@ export default {
 		return {
 			movies: [],
 			genres: [],
-			selectedGenres: [], // Notez le changement ici pour supporter la sélection multiple
+			selectedGenres: [],
 			currentIndex: 0,
-			trailerUrls: [],
+			trailerUrl: "",
 		};
 	},
+
 	computed: {
 		filteredMovies() {
 			if (this.selectedGenres.length === 0) return this.movies;
@@ -106,11 +102,13 @@ export default {
 		fetchMovieTrailers(movieId) {
 			MovieService.getMovieTrailers(movieId)
 				.then((response) => {
-					this.trailerUrls = response.data.map((key) => `https://www.youtube.com/embed/${key}`);
+					// Assuming the response data has a "key" or "id" property containing the video ID:
+					this.key = response.data;
+					this.trailerUrl = `https://www.youtube.com/embed/${this.key}`;
 				})
 				.catch((error) => {
-					console.error("Erreur lors de la récupération des trailers :", error);
-					this.trailerUrls = [];
+					console.error("Error fetching trailers:", error);
+					this.trailerUrl = ""; // Set an empty URL in case of error
 				});
 		},
 
@@ -162,12 +160,7 @@ export default {
 	width: 100%;
 	display: none;
 }
-.trailer-container {
-	display: none;
-}
-.active-trailer {
-	display: block;
-}
+
 .movie img {
 	max-width: 90%;
 }
