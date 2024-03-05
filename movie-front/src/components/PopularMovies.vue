@@ -14,19 +14,17 @@
 		</ul>
 	</div>
 
-	<div class="row">
-		<button @click="prevMovie" class="btn-nav left col-1 col-md-3">&#10094;</button>
-
-		<div class="slider-container col-10 col-md-6">
+	<div class="d-flex justify-content-center">
+		<div class="slider-container">
 			<div v-if="movies.length">
 				<div v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie" class="">
 					<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
 						<div class="col-12 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
-						<div class="col-10 col-md-8 p-3 movie-header">
+						<div class="col-12 col-md-8 p-3 movie-header">
 							<h2>{{ movie.title }}</h2>
 							<h3>note : {{ movie.vote_average }}</h3>
-							<div class="row">
-								<span v-for="genreId in movie.genre_ids" :key="genreId" class="py-1 genre-container col-5 col-md-3 genre">
+							<div class="d-inline-flex">
+								<span v-for="genreId in movie.genre_ids" :key="genreId" class="py-1 genre-container genre">
 									<span class="">{{ genreName(genreId) }}</span>
 								</span>
 							</div>
@@ -39,7 +37,11 @@
 				</div>
 			</div>
 		</div>
-		<button @click="nextMovie" class="btn-nav right col-1 col-md-3">&#10095;</button>
+	</div>
+	<div class="d-flex justify-content-center px-5 align-bottom nav-bottom">
+		<button @click="prevMovie" class="btn-nav left">&#10094;</button>
+
+		<button @click="nextMovie" class="btn-nav right">&#10095;</button>
 	</div>
 </template>
 
@@ -161,8 +163,11 @@ export default {
 </script>
 
 <style>
-
-
+.nav-bottom {
+	position: fixed;
+	bottom: 0.3em;
+	width: 100%;
+}
 .title-page {
 	margin-bottom: 1em;
 }
@@ -214,38 +219,49 @@ export default {
 }
 
 .btn-nav {
-	position: absolute;
-	top: 50%;
-	height: 100vh !important;
-
 	transform: translateY(-50%); /* Ajuste le centrage vertical */
 	background: none;
 	border: none;
 	font-size: 5em; /* Ajustez selon vos préférences */
 	cursor: pointer; /* Change le curseur en pointer pour indiquer l'action */
+	color: #333;
+	margin: none;
+	width: auto !important;
 }
 
 .btn-nav.left {
-	left: -1em;
+	left: 0em;
 }
 
 .btn-nav.right {
-	right: -1em;
+	right: 0em;
 }
 
-@media (max-width: 768px) {
-
+@media (max-width: 968px) {
 	.slider-container {
-		width: 90vw;
+		width: 100vw;
+		max-width: 100vw;
+		padding: 1em;
 	}
 	.btn-nav {
+		position: fixed;
+		bottom: 0px !important;
+		color: #333;
 	}
 	.btn-nav.left {
-		left: 0em;
+		position: fixed !important;
+		bottom: 0px !important;
+		left: 0em !important;
 	}
 
 	.btn-nav.right {
 		right: 0em;
+		bottom: 0px;
+	}
+	.genre {
+		font-size: 0.6em;
+		margin: 0.3em;
+		padding: 2px 4px;
 	}
 }
 </style>

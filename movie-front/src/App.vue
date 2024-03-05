@@ -21,6 +21,7 @@ html,
 body {
 	width: 100%;
 	min-width: 100%;
+	max-width: 100%;
 	margin: 0;
 	padding: 0;
 }
@@ -33,5 +34,6 @@ body {
 	margin-top: 20px;
 	width: 100%;
 	min-width: 100%;
+	max-width: 100%;
 }
 </style>
