@@ -17,7 +17,7 @@
 
 		<div v-if="movies.length">
 			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
-			<div>
+			<div v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie" class="movie">
 				<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
 					<div class="col-6 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
 					<div class="col-6 col-md-8 p-3">

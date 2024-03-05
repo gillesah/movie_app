@@ -16,6 +16,7 @@
     "core-js": "^3.8.3",
     "react-slick": "^0.30.2",
     "vue": "^3.4.21",
+    "vue3-touch-events": "^4.1.8",
     "vue3-youtube": "^0.1.9",
     "youtube": "^0.1.0"
   },
