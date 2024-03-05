@@ -1,43 +1,45 @@
 /* eslint-disable */
 <template>
-	<div class="slider-container">
-		<h1 class="title-page">Mon film ce soir</h1>
+	<h1 class="title-page">Mon film ce soir</h1>
 
-		<div class="dropdown">
-			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
-			<ul class="dropdown-menu">
-				<li v-for="genre in genres" :key="genre.id">
-					<label class="dropdown-item">
-						<input type="checkbox" :value="genre.id" v-model="selectedGenres" />
-						{{ genre.name }}
-					</label>
-				</li>
-			</ul>
-		</div>
+	<div class="dropdown">
+		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
+		<ul class="dropdown-menu">
+			<li v-for="genre in genres" :key="genre.id">
+				<label class="dropdown-item">
+					<input type="checkbox" :value="genre.id" v-model="selectedGenres" />
+					{{ genre.name }}
+				</label>
+			</li>
+		</ul>
+	</div>
 
-		<div v-if="movies.length">
-			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
-			<div v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie" class="movie">
-				<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
-					<div class="col-6 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
-					<div class="col-6 col-md-8 p-3">
-						<h2>{{ movie.title }}</h2>
-						<h3>note : {{ movie.vote_average }}</h3>
-						<div v-for="genreId in movie.genre_ids" :key="genreId" class="py-1">
-							<span class="genre">{{ genreName(genreId) }}</span>
+	<div class="row">
+		<button @click="prevMovie" class="btn-nav left col-1 col-md-3">&#10094;</button>
+
+		<div class="slider-container col-10 col-md-6">
+			<div v-if="movies.length">
+				<div v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie" class="">
+					<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
+						<div class="col-12 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
+						<div class="col-10 col-md-8 p-3 movie-header">
+							<h2>{{ movie.title }}</h2>
+							<h3>note : {{ movie.vote_average }}</h3>
+							<div class="row">
+								<span v-for="genreId in movie.genre_ids" :key="genreId" class="py-1 genre-container col-5 col-md-3 genre">
+									<span class="">{{ genreName(genreId) }}</span>
+								</span>
+							</div>
 						</div>
-						<p class="my-5">{{ movie.overview }}</p>
-						<iframe :src="trailerUrl" ref="youtubePlayer" width="560" height="315" frameborder="0" allowfullscreen></iframe>
-
-						<!-- <div class="trailer-container" v-if="trailerUrl">
-							<iframe :src="trailerUrl" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-						</div> -->
+						<div class="row">
+							<p class="my-5 col-12 col-md-6">{{ movie.overview }}</p>
+							<div class="col-12 col-md-6"><iframe :src="trailerUrl" ref="youtubePlayer" width="100%" height="315" frameborder="0" allowfullscreen></iframe></div>
+						</div>
 					</div>
 				</div>
 			</div>
-
-			<button @click="nextMovie" class="btn-nav right">&#10095;</button>
 		</div>
+		<button @click="nextMovie" class="btn-nav right col-1 col-md-3">&#10095;</button>
 	</div>
 </template>
 
@@ -159,16 +161,19 @@ export default {
 </script>
 
 <style>
+
+
 .title-page {
-	margin-bottom: 2em;
+	margin-bottom: 1em;
 }
+
 .genre {
 	background-color: #402060;
 	color: white;
 	padding: 4px 8px;
 	text-align: center;
 	border-radius: 5px;
-	margin: 1em;
+	margin: 0.5em;
 }
 .genre-button {
 	margin-right: 10px;
@@ -181,6 +186,8 @@ export default {
 
 .movie img {
 	max-width: 90%;
+	height: 30vh;
+	max-height: 30vh;
 }
 .active-movie {
 	display: flex; /* Afficher seulement le film actif */
@@ -189,8 +196,11 @@ export default {
 
 .slider-container {
 	position: relative;
-	max-width: 80vw;
+	max-width: 45vw;
 	margin: auto;
+	margin-top: 2em !important;
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	padding: 2em;
 }
 
 .movies-container {
@@ -198,7 +208,7 @@ export default {
 	align-items: center; /* Centre les éléments verticalement */
 	justify-content: center; /* Centre le contenu horizontalement */
 	position: relative; /* Nécessaire pour positionner les boutons de navigation */
-	max-width: 70vw;
+	max-width: 60vw;
 	height: 100vh;
 	max-height: 100vh;
 }
@@ -206,6 +216,8 @@ export default {
 .btn-nav {
 	position: absolute;
 	top: 50%;
+	height: 100vh !important;
+
 	transform: translateY(-50%); /* Ajuste le centrage vertical */
 	background: none;
 	border: none;
@@ -214,10 +226,26 @@ export default {
 }
 
 .btn-nav.left {
-	left: -1em; /* Positionne le bouton à gauche */
+	left: -1em;
 }
 
 .btn-nav.right {
 	right: -1em;
+}
+
+@media (max-width: 768px) {
+
+	.slider-container {
+		width: 90vw;
+	}
+	.btn-nav {
+	}
+	.btn-nav.left {
+		left: 0em;
+	}
+
+	.btn-nav.right {
+		right: 0em;
+	}
 }
 </style>
