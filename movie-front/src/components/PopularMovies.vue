@@ -22,12 +22,12 @@
 					<div class="col-6 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
 					<div class="col-6 col-md-8 p-3">
 						<h2>{{ movie.title }}</h2>
-						<div>{{ trailerUrl }} coucou</div>
 						<h3>note : {{ movie.vote_average }}</h3>
 						<div v-for="genreId in movie.genre_ids" :key="genreId" class="py-1">
 							<span class="genre">{{ genreName(genreId) }}</span>
 						</div>
 						<p class="my-5">{{ movie.overview }}</p>
+						<iframe :src="trailerUrl" ref="youtubePlayer" width="560" height="315" frameborder="0" allowfullscreen></iframe>
 
 						<!-- <div class="trailer-container" v-if="trailerUrl">
 							<iframe :src="trailerUrl" width="560" height="315" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -127,6 +127,24 @@ export default {
 			} else {
 				this.currentIndex = this.movies.length - 1; // Loop to the end
 			}
+		},
+		loadYouTubeVideo() {
+			let tag = document.createElement("script");
+			tag.src = "https://www.youtube.com/iframe_api";
+			let firstScriptTag = document.getElementsByTagName("script")[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+			window.onYouTubeIframeAPIReady = () => {
+				new window.YT.Player(this.$refs.youtubePlayer, {
+					events: {
+						onReady: this.onPlayerReady,
+					},
+				});
+			};
+		},
+
+		onPlayerReady(event) {
+			event.target.playVideo();
 		},
 	},
 	created() {
