@@ -1,7 +1,5 @@
 /* eslint-disable */
 <template>
-	<h1 class="title-page">Mon film ce soir</h1>
-
 	<div class="dropdown">
 		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
 		<ul class="dropdown-menu">
@@ -38,10 +36,12 @@
 			</div>
 		</div>
 	</div>
-	<div class="d-flex justify-content-center px-5 align-bottom nav-bottom">
-		<button @click="prevMovie" class="btn-nav left">&#10094;</button>
+	<div class="d-flex px-5 align-bottom nav-bottom justify-content-center">
+		<div class="d-flex bar-nav-bottom justify-content-between align-items-center">
+			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
 
-		<button @click="nextMovie" class="btn-nav right">&#10095;</button>
+			<button @click="nextMovie" class="btn-nav right">&#10095;</button>
+		</div>
 	</div>
 </template>
 
@@ -165,8 +165,35 @@ export default {
 <style>
 .nav-bottom {
 	position: fixed;
-	bottom: 0.3em;
+	bottom: 0.1em;
 	width: 100%;
+	height: 2em;
+}
+.bar-nav-bottom {
+	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	background-color: #fff;
+	border-radius: 1em;
+	width: 30vw;
+}
+
+.btn-nav {
+	/* transform: translateY(-50%); Ajuste le centrage vertical */
+	background: none;
+	border: none;
+	font-size: 1em; /* Ajustez selon vos préférences */
+	cursor: pointer; /* Change le curseur en pointer pour indiquer l'action */
+	color: #333;
+	margin: none;
+	width: 100% !important;
+	position: relative !important;
+}
+
+.btn-nav.left {
+	left: 0.3em;
+}
+
+.btn-nav.right {
+	right: 0.3em;
 }
 .title-page {
 	margin-bottom: 1em;
@@ -204,8 +231,10 @@ export default {
 	max-width: 45vw;
 	margin: auto;
 	margin-top: 2em !important;
-	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+	box-shadow: rgba(228, 228, 228, 0.24) 0px 3px 8px;
 	padding: 2em;
+	background-color: #fff;
+	border-radius: 0.4em;
 }
 
 .movies-container {
@@ -218,50 +247,39 @@ export default {
 	max-height: 100vh;
 }
 
-.btn-nav {
-	transform: translateY(-50%); /* Ajuste le centrage vertical */
-	background: none;
-	border: none;
-	font-size: 5em; /* Ajustez selon vos préférences */
-	cursor: pointer; /* Change le curseur en pointer pour indiquer l'action */
-	color: #333;
-	margin: none;
-	width: auto !important;
-}
-
-.btn-nav.left {
-	left: 0em;
-}
-
-.btn-nav.right {
-	right: 0em;
-}
-
 @media (max-width: 968px) {
 	.slider-container {
-		width: 100vw;
-		max-width: 100vw;
+		width: 80%;
+		max-width: 80vw;
 		padding: 1em;
 	}
 	.btn-nav {
-		position: fixed;
 		bottom: 0px !important;
-		color: #333;
 	}
-	.btn-nav.left {
-		position: fixed !important;
-		bottom: 0px !important;
-		left: 0em !important;
+	.btn-nav {
+		/* transform: translateY(-50%); Ajuste le centrage vertical */
+		background: none;
+		border: none;
+		font-size: 1.6em; /* Ajustez selon vos préférences */
+		cursor: pointer; /* Change le curseur en pointer pour indiquer l'action */
+		color: #333;
+		margin: none;
+		width: auto !important;
+		position: relative !important;
 	}
 
-	.btn-nav.right {
-		right: 0em;
-		bottom: 0px;
-	}
 	.genre {
 		font-size: 0.6em;
 		margin: 0.3em;
 		padding: 2px 4px;
+	}
+	.movie img {
+		max-width: 90%;
+		height: 55vh;
+		max-height: 55vh;
+	}
+	.row {
+		--bs-gutter-x: 0.1rem !important;
 	}
 }
 </style>
