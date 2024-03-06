@@ -3,18 +3,18 @@
 		<div class="row">
 			<div class="col-md-3 col-sm-3 col-3">
 				<div class="logo-container">
-					<a href="/"><img src="../assets/logo.png" alt="" class="logo" /></a>
+					<p class="logosite">Mood <br />Cine</p>
 				</div>
 			</div>
-			<div class="vertical-flex col-md-6 col-sm-6 col-6 text-end align-middle">
+			<div class="vertical-flex col-md-9 col-sm-9 col-9 text-end align-middle">
 				<div class="'bi ' + menu_icon" @click="toggleMenu">
 					<i :class="menu_icon"></i>
 				</div>
 				<div :class="{ desktop_menu: true, mobile_menu: menuValue }" id="desktop_menu">
 					<ul>
-						<li @click="closeMenu">Toutes les ruches</li>
-						<li @click="closeMenu">Mes ruches</li>
-						<li @click="closeMenu">Créer une ruche</li>
+						<li @click="closeMenu">menu</li>
+						<li @click="closeMenu">menu</li>
+						<li @click="closeMenu">menu</li>
 					</ul>
 				</div>
 			</div>
@@ -28,7 +28,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 export default {
 	data() {
 		return {
-			menuValue: true,
+			menuValue: false,
 			menu_icon: "bi-list",
 		};
 	},
@@ -48,19 +48,24 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 header {
 	padding: 0px;
 	margin-bottom: 2em;
 }
-.logo {
-	width: 10vw;
-}
-.logo:hover {
-	cursor: pointer;
+.logosite {
+	font-family: "Montserrat", sans-serif;
+	color: #fff;
+	text-align: left;
+	margin-left: 10vw;
+	font-weight: 800;
+	font-size: 1.8em;
+	line-height: 0.9em;
 }
 
 .desktop_menu {
-	margin-top: 2vh;
+	display: none; /* Cache par défaut le menu desktop */
 }
 .desktop_menu ul {
 	padding: 0;
@@ -78,34 +83,12 @@ header {
 	font-weight: 300;
 }
 
-#desktop_menu ul li a {
-	position: relative;
-	line-height: 1.4em;
-	margin-top: 2em;
-	margin-bottom: 3em;
-	text-decoration: none;
-}
-
-#desktop_menu ul li a::after {
-	content: "";
-	position: absolute;
-	width: 100%;
-	height: 1px;
-	border-radius: 4px;
-	background-color: #fff;
-	bottom: 0;
-	left: 0;
-	transform-origin: right;
-	transform: scaleX(0);
-	transition: transform 0.3s ease-in-out;
-}
-#desktop_menu ul li a:hover::after {
-	transform-origin: left;
-	transform: scaleX(1);
-}
-
 .bi-list {
-	display: none;
+	display: block !important; /* Affiche toujours l'icône burger */
+	color: white;
+	font-size: 3em;
+	padding: 10px;
+	margin-right: 10vh;
 }
 .bi-person-fill {
 	font-size: 2em;
@@ -114,49 +97,34 @@ header {
 .login-link a {
 	font-size: 1em;
 }
-.vertical-flex-center {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
 .vertical-flex {
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 }
-.modal-body form input {
-	margin: 1em;
+
+/* Style pour le menu mobile appliqué par défaut */
+.mobile_menu,
+.desktop_menu {
+	position: fixed;
+	transition: 0.4 ease-in-out;
+	right: -280px;
+	top: 0;
+	width: 280px;
+	height: 100%;
+	z-index: 1000; /* Assure que le menu est bien au-dessus des autres éléments */
 }
 
-@media screen and (min-width: 128px) and (max-width: 900px) {
-	.desktop_menu {
-		position: fixed !important;
-		transition: 0.4 ease-in-out;
+.mobile_menu ul li {
+	display: block;
+	text-align: left;
+	margin: 0;
+	padding: 10px 0 10px 26px;
+	border-bottom: 1px solid grey;
+}
 
-		right: -280px;
-		top: 34px;
-		width: 280px;
-		height: 100%;
-	}
-	.desktop_menu ul li {
-		display: block;
-		text-align: left;
-		margin: 0;
-		padding: 10px 0 10px 26px;
-		border-bottom: 1px solid grey;
-	}
-	.bi-list {
-		display: block !important;
-		color: white;
-		font-size: 3em;
-		padding: 10px;
-	}
-	.mobile_menu {
-		right: 0;
-		transition: 0.4 ease-in-out;
-	}
-	.logo {
-		width: 18vw;
-	}
+/* Quand menuValue est true, déplace le menu pour le montrer */
+.mobile_menu {
+	right: 0 !important;
 }
 </style>
