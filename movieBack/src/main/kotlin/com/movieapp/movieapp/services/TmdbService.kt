@@ -67,7 +67,7 @@ class TmdbService(private val appConfig: AppConfig) {
     }
     fun getVoteAverage(): List<Map<String, Any>>? {
         val apiKey = appConfig.getApiKey()
-        val url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&language=en-US&page=1&sort_by=vote_average.desc&api_key=$apiKey"
+        val url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&language=en-US&page=1&sort_by=vote_average.desc&vote_count.gte=150&api_key=$apiKey"
         val response = restTemplate.getForObject(url, Map::class.java)
         return response?.get("results") as List<Map<String, Any>>?
     }
