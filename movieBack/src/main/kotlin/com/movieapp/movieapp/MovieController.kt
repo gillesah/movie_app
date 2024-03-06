@@ -32,6 +32,11 @@ class MovieController(private val appConfig: AppConfig, private val tmdbService:
         return ResponseEntity.ok(movies)
     }
     //http://localhost:8080/popular?genreId=16
+    @GetMapping("/vote")
+    fun getMovieVote(@RequestParam(required = false) genreId: Int?): ResponseEntity<List<Map<String, Any>>?> {
+        val movies = tmdbService.getVoteAverage()
+        return ResponseEntity.ok(movies)
+    }
     @GetMapping("/genres")
     fun getGenres(): ResponseEntity<List<Map<String, Any>>?> {
         val genres = tmdbService.getGenres()

@@ -10,6 +10,13 @@ class MovieService {
 		}
 		return axios.get(url);
 	}
+	getAllVoteMovies(genreId) {
+		let url = `${API_URL}/vote`;
+		if (genreId) {
+			url += `?genreId=${genreId}`;
+		}
+		return axios.get(url);
+	}
 
 	getGenres() {
 		return axios.get(`${API_URL}/genres`);
