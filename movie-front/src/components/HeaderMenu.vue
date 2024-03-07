@@ -1,10 +1,10 @@
 <template>
 	<header class="header">
 		<div class="logo-container">
-			<p class="logosite">
+			<div class="logosite">
 				Mood <br />
 				Cine
-			</p>
+			</div>
 		</div>
 		<div @click="toggleMenu" class="menu-icon-container">
 			<i :class="menu_icon"></i>
@@ -99,5 +99,11 @@ export default {
 .menu ul li a {
 	color: #333;
 	text-decoration: none;
+}
+@media (max-width: 968px) {
+	.logosite {
+		font-size: 0.8em;
+		line-height: 1em;
+	}
 }
 </style>

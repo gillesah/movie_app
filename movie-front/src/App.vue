@@ -38,4 +38,9 @@ body {
 	min-width: 100%;
 	max-width: 100%;
 }
+@media (max-width: 968px) {
+#app { 
+margin-top: 0px !important;
+}
+}
 </style>
