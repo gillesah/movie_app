@@ -1,21 +1,9 @@
-/* eslint-disable */
 <template>
-	<div class="dropdown">
-		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
-		<ul class="dropdown-menu">
-			<li v-for="genre in genres" :key="genre.id">
-				<label class="dropdown-item">
-					<input type="checkbox" :value="genre.id" v-model="selectedGenres" />
-					{{ genre.name }}
-				</label>
-			</li>
-		</ul>
-	</div>
-
-	<div class="d-flex justify-content-center" v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie">
-		<div class="slider-container">
-			<div v-if="movies.length">
-				<div class="">
+	<div>
+		<GenresSelector :genres="genres" v-model="selectedGenres" />
+		<div class="d-flex justify-content-center" v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie">
+			<div class="slider-container">
+				<div v-if="movies.length">
 					<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
 						<div class="col-12 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
 						<div class="col-12 col-md-8 p-3 movie-header">
@@ -35,67 +23,52 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="d-flex px-5 align-bottom nav-bottom justify-content-center">
-		<div class="d-flex bar-nav-bottom justify-content-between align-items-center">
-			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
-
-			<button @click="nextMovie" class="btn-nav right">&#10095;</button>
+		<div class="d-flex px-5 align-bottom nav-bottom justify-content-center">
+			<div class="d-flex bar-nav-bottom justify-content-between align-items-center">
+				<button @click="prevMovie" class="btn-nav left">&#10094;</button>
+				<button @click="nextMovie" class="btn-nav right">&#10095;</button>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import GenresSelector from "@/components/GenresSelector.vue";
 import MovieService from "@/services/MovieService";
-
 export default {
+	components: {
+		GenresSelector,
+	},
 	data() {
 		return {
 			movies: [],
-			genres: [],
 			selectedGenres: [],
 			currentIndex: 0,
 			trailerUrl: "",
+			genres: [],
 		};
 	},
-
 	computed: {
 		filteredMovies() {
 			if (this.selectedGenres.length === 0) return this.movies;
 			return this.movies.filter((movie) => movie.genre_ids.some((id) => this.selectedGenres.includes(id)));
 		},
 	},
-
-	watch: {
-		currentIndex() {
-			this.loadCurrentMovieTrailer();
-		},
-	},
 	methods: {
-		toggleGenreSelection(genreId) {
-			const index = this.selectedGenres.indexOf(genreId);
-			if (index !== -1) {
-				this.selectedGenres.splice(index, 1);
-			} else {
-				this.selectedGenres.push(genreId);
-			}
-		},
 		genreName(genreId) {
 			const genre = this.genres.find((genre) => genre.id === genreId);
 			return genre ? genre.name : "Genre inconnu";
 		},
-		getAllMovies() {
-			MovieService.getAllVoteMovies().then((response) => {
-				this.movies = response.data;
-				if (this.movies.length > 0) {
-					this.fetchMovieTrailers(this.movies[0].id);
-				}
-			});
+		async getAllMovies() {
+			const response = await MovieService.getAllVoteMovies();
+			this.movies = response.data;
+			if (this.movies.length > 0) {
+				this.fetchMovieTrailers(this.movies[0].id);
+			}
 		},
-		getGenres() {
-			MovieService.getGenres().then((response) => {
-				this.genres = response.data;
-			});
+		async getGenres() {
+			const response = await MovieService.getGenres();
+			this.genres = response.data; // Adjust according to your API response structure
 		},
 		loadCurrentMovieTrailer() {
 			const currentMovie = this.filteredMovies[this.currentIndex];
@@ -106,58 +79,31 @@ export default {
 		fetchMovieTrailers(movieId) {
 			MovieService.getMovieTrailers(movieId)
 				.then((response) => {
-					// Assuming the response data has a "key" or "id" property containing the video ID:
-					this.key = response.data;
-					this.trailerUrl = `https://www.youtube.com/embed/${this.key}`;
+					this.trailerUrl = `https://www.youtube.com/embed/${response.data.key}`;
 				})
 				.catch((error) => {
 					console.error("Error fetching trailers:", error);
-					this.trailerUrl = ""; // Set an empty URL in case of error
+					this.trailerUrl = "";
 				});
 		},
-
-		//940551
-
 		nextMovie() {
-			if (this.currentIndex < this.movies.length - 1) {
+			if (this.currentIndex < this.filteredMovies.length - 1) {
 				this.currentIndex++;
 			} else {
-				this.currentIndex = 0; // Loop back to the start
+				this.currentIndex = 0;
 			}
 		},
 		prevMovie() {
 			if (this.currentIndex > 0) {
 				this.currentIndex--;
 			} else {
-				this.currentIndex = this.movies.length - 1; // Loop to the end
+				this.currentIndex = this.filteredMovies.length - 1;
 			}
-		},
-		loadYouTubeVideo() {
-			let tag = document.createElement("script");
-			tag.src = "https://www.youtube.com/iframe_api";
-			let firstScriptTag = document.getElementsByTagName("script")[0];
-			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-			window.onYouTubeIframeAPIReady = () => {
-				new window.YT.Player(this.$refs.youtubePlayer, {
-					events: {
-						onReady: this.onPlayerReady,
-					},
-				});
-			};
-		},
-
-		onPlayerReady(event) {
-			event.target.playVideo();
 		},
 	},
 	created() {
 		this.getAllMovies();
 		this.getGenres();
-
-		// if (this.movies.length > 0) {
-		// 	this.fetchMovieTrailers(this.movie.id);
-		// }
 	},
 };
 </script>

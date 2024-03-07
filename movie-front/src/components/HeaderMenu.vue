@@ -62,6 +62,11 @@ export default {
 	font-size: 2em;
 	cursor: pointer;
 }
+.bi-x-lg {
+	color: #333;
+	position: relative;
+	z-index: 1002;
+}
 
 .menu {
 	display: none;
@@ -83,6 +88,7 @@ export default {
 .menu ul {
 	list-style-type: none;
 	padding: 1em;
+	margin-top: 20vh;
 }
 
 .menu ul li {
