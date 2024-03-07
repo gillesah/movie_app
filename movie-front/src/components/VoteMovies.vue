@@ -181,6 +181,9 @@ export default {
 	padding: 2em;
 	background-color: #fff;
 	border-radius: 0.4em;
+	height: 80vh;
+	max-height: 80vh;
+	overflow-y: auto;
 }
 
 .movies-container {
@@ -189,8 +192,8 @@ export default {
 	justify-content: center; /* Centre le contenu horizontalement */
 	position: relative; /* Nécessaire pour positionner les boutons de navigation */
 	max-width: 60vw;
-	height: 100vh;
-	max-height: 100vh;
+	height: 80vh;
+	max-height: 80vh;
 }
 
 @media (max-width: 968px) {

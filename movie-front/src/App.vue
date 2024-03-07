@@ -39,8 +39,9 @@ body {
 	max-width: 100%;
 }
 @media (max-width: 968px) {
-#app { 
-margin-top: 0px !important;
-}
+	#app {
+		margin-top: 0px !important;
+		max-height: 100vh !important;
+	}
 }
 </style>

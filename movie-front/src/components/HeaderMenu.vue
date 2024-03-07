@@ -48,6 +48,8 @@ export default {
 	align-items: center;
 	padding: 0px;
 	margin: 0 3em 0 3em;
+	line-height: 1;
+	text-align: left;
 }
 
 .logosite {
