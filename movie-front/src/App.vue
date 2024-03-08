@@ -1,10 +1,13 @@
 <template>
 	<HeaderMenu />
 	<div><router-view /></div>
+	<FooterMood />
 </template>
 
 <script>
 import HeaderMenu from "./components/HeaderMenu.vue";
+import FooterMood from "./components/FooterMood.vue";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
@@ -13,6 +16,7 @@ export default {
 	name: "App",
 	components: {
 		HeaderMenu,
+		FooterMood,
 	},
 };
 </script>

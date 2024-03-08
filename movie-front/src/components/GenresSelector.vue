@@ -1,6 +1,6 @@
 <template>
 	<div class="dropdown">
-		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
+		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-filter"></i> Filtrer</button>
 		<ul class="dropdown-menu">
 			<li v-for="genre in genres" :key="genre.id">
 				<label class="dropdown-item">
