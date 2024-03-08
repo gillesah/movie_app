@@ -1,64 +1,110 @@
+/* eslint-disable */
 <template>
-	<div class="d-flex justify-content-center" v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie">
+	<div></div>
+	<div class="dropdown">
+		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Filtrer par genre</button>
+		<ul class="dropdown-menu">
+			<li v-for="genre in genres" :key="genre.id">
+				<label class="dropdown-item">
+					<input type="checkbox" :value="genre.id" v-model="selectedGenres" />
+					{{ genre.name }}
+				</label>
+			</li>
+		</ul>
+	</div>
+
+	<div class="d-flex justify-content-center">
 		<div class="slider-container">
 			<div v-if="movies.length">
-				<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
-					<div class="col-12 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
-					<div class="col-12 col-md-8 p-3 movie-header">
-						<h2>{{ movie.title }}</h2>
-						<h3>note : {{ movie.vote_average }}</h3>
-						<div class="d-inline-flex">
-							<span v-for="genreId in movie.genre_ids" :key="genreId" class="py-1 genre-container genre">
-								<span class="">{{ genreName(genreId) }}</span>
-							</span>
+				<div v-touch:swipe.left="nextMovie" v-touch:swipe.right="prevMovie" class="">
+					<div class="movie" v-for="(movie, index) in filteredMovies" :key="movie.id" :class="{ 'active-movie row': index === currentIndex }">
+						<div class="col-12 col-md-4"><img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Poster" /></div>
+						<div class="col-12 col-md-8 p-3 movie-header">
+							<h2>{{ movie.title }}</h2>
+							<h3>note : {{ movie.vote_average }}</h3>
+							<div class="d-inline-flex">
+								<span v-for="genreId in movie.genre_ids" :key="genreId" class="py-1 genre-container genre">
+									<span class="">{{ genreName(genreId) }}</span>
+								</span>
+							</div>
 						</div>
-					</div>
-					<div class="row">
-						<p class="my-5 col-12 col-md-6">{{ movie.overview }}</p>
-						<div class="col-12 col-md-6"><iframe :src="trailerUrl" ref="youtubePlayer" width="100%" height="315" frameborder="0" allowfullscreen></iframe></div>
+						<div class="row">
+							<p class="my-5 col-12 col-md-6">{{ movie.overview }}</p>
+							<div class="col-12 col-md-6"><iframe :src="trailerUrl" ref="youtubePlayer" width="100%" height="315" frameborder="0" allowfullscreen></iframe></div>
+						</div>
 					</div>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="d-flex px-5 align-bottom nav-bottom justify-content-center">
+		<div class="d-flex bar-nav-bottom justify-content-between align-items-center">
+			<button @click="prevMovie" class="btn-nav left">&#10094;</button>
+
+			<button @click="nextMovie" class="btn-nav right">&#10095;</button>
 		</div>
 	</div>
 </template>
 
 <script>
 import MovieService from "@/services/MovieService";
+
 export default {
-	props: {
-		fetchMoviesMethod: Function,
-		genres: Array,
-	},
 	data() {
 		return {
-			// localGenres: this.genres,
-
 			movies: [],
+			genres: [],
 			selectedGenres: [],
 			currentIndex: 0,
 			trailerUrl: "",
 		};
 	},
+	props: ["movieType"],
+	mounted() {
+		console.log(`le movietype est : ${this.genres}`); // Devrait afficher la valeur de movieType passée dans l'URL
+	},
+
 	computed: {
 		filteredMovies() {
 			if (this.selectedGenres.length === 0) return this.movies;
 			return this.movies.filter((movie) => movie.genre_ids.some((id) => this.selectedGenres.includes(id)));
 		},
 	},
+
+	watch: {
+		currentIndex() {
+			this.loadCurrentMovieTrailer();
+		},
+	},
 	methods: {
+		toggleGenreSelection(genreId) {
+			const index = this.selectedGenres.indexOf(genreId);
+			if (index !== -1) {
+				this.selectedGenres.splice(index, 1);
+			} else {
+				this.selectedGenres.push(genreId);
+			}
+		},
 		genreName(genreId) {
 			const genre = this.genres.find((genre) => genre.id === genreId);
 			return genre ? genre.name : "Genre inconnu";
 		},
-
-		async fetchMovies() {
-			try {
-				const response = await this.fetchMoviesMethod();
-				this.movies = response.data; 
-			} catch (error) {
-				console.error("Error fetching movies:", error);
-			}
+		getAllMovies(movieType) {
+			// Modify the method to accept a parameter for different types of movies
+			movieType = this.movieType;
+			MovieService.getAllMoviesByType(movieType).then((response) => {
+				this.movies = response.data;
+				console.log(this.url);
+				console.log(this.movies);
+				if (this.movies.length > 0) {
+					this.fetchMovieTrailers(this.movies[0].id);
+				}
+			});
+		},
+		getGenres() {
+			MovieService.getGenres().then((response) => {
+				this.genres = response.data;
+			});
 		},
 		loadCurrentMovieTrailer() {
 			const currentMovie = this.filteredMovies[this.currentIndex];
@@ -69,30 +115,58 @@ export default {
 		fetchMovieTrailers(movieId) {
 			MovieService.getMovieTrailers(movieId)
 				.then((response) => {
-					this.trailerUrl = `https://www.youtube.com/embed/${response.data.key}`;
+					// Assuming the response data has a "key" or "id" property containing the video ID:
+					this.key = response.data;
+					this.trailerUrl = `https://www.youtube.com/embed/${this.key}`;
 				})
 				.catch((error) => {
 					console.error("Error fetching trailers:", error);
-					this.trailerUrl = "";
+					this.trailerUrl = ""; // Set an empty URL in case of error
 				});
 		},
+
+		//940551
+
 		nextMovie() {
-			if (this.currentIndex < this.filteredMovies.length - 1) {
+			if (this.currentIndex < this.movies.length - 1) {
 				this.currentIndex++;
 			} else {
-				this.currentIndex = 0;
+				this.currentIndex = 0; // Loop back to the start
 			}
 		},
 		prevMovie() {
 			if (this.currentIndex > 0) {
 				this.currentIndex--;
 			} else {
-				this.currentIndex = this.filteredMovies.length - 1;
+				this.currentIndex = this.movies.length - 1; // Loop to the end
 			}
 		},
+		loadYouTubeVideo() {
+			let tag = document.createElement("script");
+			tag.src = "https://www.youtube.com/iframe_api";
+			let firstScriptTag = document.getElementsByTagName("script")[0];
+			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+			window.onYouTubeIframeAPIReady = () => {
+				new window.YT.Player(this.$refs.youtubePlayer, {
+					events: {
+						onReady: this.onPlayerReady,
+					},
+				});
+			};
+		},
+
+		onPlayerReady(event) {
+			event.target.playVideo();
+		},
 	},
-	async created() {
-		await this.fetchMovies();
+	created() {
+		this.getAllMovies();
+		this.getGenres();
+
+		// if (this.movies.length > 0) {
+		// 	this.fetchMovieTrailers(this.movie.id);
+		// }
 	},
 };
 </script>
@@ -112,10 +186,11 @@ export default {
 }
 
 .btn-nav {
+	/* transform: translateY(-50%); Ajuste le centrage vertical */
 	background: none;
 	border: none;
-	font-size: 1em;
-	cursor: pointer; 
+	font-size: 1em; /* Ajustez selon vos préférences */
+	cursor: pointer; /* Change le curseur en pointer pour indiquer l'action */
 	color: #333;
 	margin: none;
 	width: 100% !important;
@@ -169,9 +244,6 @@ export default {
 	padding: 2em;
 	background-color: #fff;
 	border-radius: 0.4em;
-	height: 80vh;
-	max-height: 80vh;
-	overflow-y: auto;
 }
 
 .movies-container {
@@ -180,8 +252,8 @@ export default {
 	justify-content: center; /* Centre le contenu horizontalement */
 	position: relative; /* Nécessaire pour positionner les boutons de navigation */
 	max-width: 60vw;
-	height: 80vh;
-	max-height: 80vh;
+	height: 100vh;
+	max-height: 100vh;
 }
 
 @media (max-width: 968px) {
@@ -189,9 +261,6 @@ export default {
 		width: 80%;
 		max-width: 80vw;
 		padding: 1em;
-		height: 80vh;
-		max-height: 80vh;
-		overflow-y: auto;
 	}
 	.btn-nav {
 		bottom: 0px !important;

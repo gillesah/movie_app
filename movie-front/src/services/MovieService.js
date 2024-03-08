@@ -21,11 +21,17 @@ class MovieService {
 	getGenres() {
 		return axios.get(`${API_URL}/genres`);
 	}
-	
+
 	getMovieTrailers(movieId) {
 		return axios.get(`${API_URL}/${movieId}/trailers`);
 	}
-
+	getAllMoviesByType(movieType, genreId) {
+		let url = `${API_URL}/${movieType}`;
+		if (genreId) {
+			url += `?genreId=${genreId}`;
+		}
+		return axios.get(url);
+	}
 }
 
 export default new MovieService();
