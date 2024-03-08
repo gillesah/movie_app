@@ -8,7 +8,7 @@
 <style>
 .footer {
 	position: absolute;
-	bottom: 0;
+	bottom: 0.4em;
 	width: 100%;
 	text-align: center;
 	font-size: 0.7em;
