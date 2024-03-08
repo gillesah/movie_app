@@ -1,7 +1,11 @@
 <template>
-	<HeaderMenu />
-	<div><router-view /></div>
-	<FooterMood />
+	<div class="site-container">
+		<HeaderMenu />
+		<div class="content-wrap">
+			<div><router-view /></div>
+		</div>
+		<FooterMood />
+	</div>
 </template>
 
 <script>
@@ -30,6 +34,15 @@ body {
 	margin: 0;
 	padding: 0;
 	background-color: #16191a;
+	height: 100%;
+}
+
+.site-container {
+	min-height: 100vh;
+	position: relative;
+}
+.content-wrap {
+	padding-bottom: 60px;
 }
 #app {
 	font-family: Avenir, Helvetica, Arial, sans-serif;

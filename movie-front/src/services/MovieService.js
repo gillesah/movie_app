@@ -28,7 +28,7 @@ class MovieService {
 	getAllMoviesByType(movieType, genreId) {
 		let url = `${API_URL}/${movieType}`;
 		if (genreId) {
-			url += `?genreId=${genreId}`;
+			url += `?with_genres=${genreId}`;
 		}
 		return axios.get(url);
 	}

@@ -10,6 +10,7 @@ import java.util.*
 class TmdbService(private val appConfig: AppConfig) {
     private val restTemplate = RestTemplate()
     private val baseUrl = "https://api.themoviedb.org/3/movie/popular"
+    private val baseUrlVote = "https://api.themoviedb.org/3/discover/movie?include_adult=false"
     private val imageUrl = "https://image.tmdb.org/t/p/w500"
 
     fun getRandomPopularMovie(): Movie? {
@@ -65,11 +66,24 @@ class TmdbService(private val appConfig: AppConfig) {
         val response = restTemplate.getForObject(url, Map::class.java)
         return response?.get("genres") as List<Map<String, Any>>?
     }
-    fun getVoteAverage(): List<Map<String, Any>>? {
+    fun getVoteAverage(genreId: Any? = null): List<Map<String, Any>>? {
         val apiKey = appConfig.getApiKey()
-        val url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&language=en-US&page=1&sort_by=vote_average.desc&vote_count.gte=150&api_key=$apiKey"
-        val response = restTemplate.getForObject(url, Map::class.java)
-        return response?.get("results") as List<Map<String, Any>>?
+        val results = mutableListOf<Map<String, Any>>()
+
+        for (page in 1..7) {
+            var url =
+                "$baseUrlVote&language=en-US&page=$page&sort_by=vote_average.desc&vote_count.gte=200&api_key=$apiKey"
+            if (genreId != null && genreId != 0) {
+                url += "&with_genres=$genreId"
+            }
+            val response = restTemplate.getForObject(url, Map::class.java)
+            val pageResults = response?.get("results") as List<Map<String, Any>>?
+            pageResults?.let { results.addAll(it) }
+        }
+
+        return results.sortedByDescending { movie ->
+            (movie["vote_average"] as Number?)?.toDouble() ?: 0.0
+        }
     }
     fun getMovieTrailers(movieId: Int): String? {
         val apiKey = appConfig.getApiKey()

@@ -19,7 +19,7 @@ const router = createRouter({
 			path: "/movies",
 			name: "MovieList",
 			component: MovieList,
-			props: (route) => ({ movieType: route.query.movieType }),
+			props: (route) => ({ movieType: route.query.movieType, genreId: route.query.genreId }),
 		},
 		{
 			path: "/vote",

@@ -2,8 +2,10 @@
 	<header class="header">
 		<div class="logo-container">
 			<div class="logosite">
-				Mood <br />
-				Cine
+				<router-link to="/">
+					Mood <br />
+					Cine
+				</router-link>
 			</div>
 		</div>
 		<div @click="toggleMenu" class="menu-icon-container">
@@ -52,11 +54,12 @@ export default {
 	text-align: left;
 }
 
-.logosite {
+.logosite a {
 	font-family: "Montserrat", sans-serif;
 	color: #fff;
 	font-weight: 800;
 	font-size: 1.8em;
+	text-decoration: none;
 }
 
 .menu-icon-container {
@@ -106,6 +109,9 @@ export default {
 	.logosite {
 		font-size: 0.8em;
 		line-height: 1em;
+	}
+	.header {
+		margin-top: 2em !important;
 	}
 }
 </style>

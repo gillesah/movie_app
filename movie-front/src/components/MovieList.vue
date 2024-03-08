@@ -54,14 +54,14 @@ export default {
 		return {
 			movies: [],
 			genres: [],
-			selectedGenres: [],
+			selectedGenres: this.genreId,
 			currentIndex: 0,
 			trailerUrl: "",
 		};
 	},
-	props: ["movieType"],
+	props: ["movieType", "genreId"],
 	mounted() {
-		console.log(`le movietype est : ${this.genres}`); // Devrait afficher la valeur de movieType passée dans l'URL
+		console.log(`le movietype est : ${this.genres}   ${this.genreId} ${this.url}`); // Devrait afficher la valeur de movieType passée dans l'URL
 	},
 
 	computed: {
@@ -89,13 +89,11 @@ export default {
 			const genre = this.genres.find((genre) => genre.id === genreId);
 			return genre ? genre.name : "Genre inconnu";
 		},
-		getAllMovies(movieType) {
-			// Modify the method to accept a parameter for different types of movies
+		getAllMovies(movieType, genreId) {
 			movieType = this.movieType;
-			MovieService.getAllMoviesByType(movieType).then((response) => {
+			MovieService.getAllMoviesByType(movieType, genreId).then((response) => {
 				this.movies = response.data;
 				console.log(this.url);
-				console.log(this.movies);
 				if (this.movies.length > 0) {
 					this.fetchMovieTrailers(this.movies[0].id);
 				}
@@ -161,7 +159,7 @@ export default {
 		},
 	},
 	created() {
-		this.getAllMovies();
+		this.getAllMovies(this.movieType, this.genreId);
 		this.getGenres();
 
 		// if (this.movies.length > 0) {
